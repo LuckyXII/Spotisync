@@ -29,30 +29,32 @@ async def authenticate(
 @app.get("/playlists")
 async def my_playlists(permission: APIPermission = Depends(authenticate)):
     try:
-        pl = get_user_playlists(permission.CLIENT_SCOPE)
+        pl = None
+        pl = await get_user_playlists(permission)
     except Exception as e:
         raise HTTPException(status_code=500, detail= e)
     finally:
-        if len(pl) == 0: 
+        if pl is None: 
             raise HTTPException(status_code=404, detail="no playlists found")
         return pl
         
 @app.get("/linked-playlists")
 async def linked_playlists(permission: APIPermission = Depends(authenticate)):
     try:
-        ll = await get_linked_lists()
-        pl = get_linked_playlists(permission.CLIENT_SCOPE, ll)
+        pl = None
+        
+        pl = await get_linked_playlists(permission)
     except Exception as e:
         raise HTTPException(status_code=500, detail= e)
     finally:
-        if len(pl) == 0: 
+        if pl is None: 
             raise HTTPException(status_code=404, detail="no playlists found")
         return pl
 
 @app.post("/linked_playlists/{sync_from_id}/{sync_to_id}")
 async def link_playlists(sync_from_id, sync_to_id):
     try:
-        await link_lists(sync_from=sync_from_id, sync_to=sync_to_id)
+        await link_lists(sync_from=sync_from_id.strip(), sync_to=sync_to_id.strip())
     except Exception as e:
         raise HTTPException(status_code=500, detail= e)
     finally: return 'Success!'
@@ -61,7 +63,7 @@ async def link_playlists(sync_from_id, sync_to_id):
 @app.delete("/linked_playlists/{sync_from_id}/{sync_to_id}")
 async def unlink_playlists(sync_from_id, sync_to_id):
     try:
-       delete_count = await unlink_list(sync_from=sync_from_id, sync_to=sync_to_id)
+       delete_count = await unlink_list(sync_from=sync_from_id.strip(), sync_to=sync_to_id.strip())
     except Exception as e:
         raise HTTPException(status_code=500, detail= e)
     finally:
@@ -76,7 +78,7 @@ async def unlink_playlists(sync_from_id, sync_to_id):
 @app.delete("/linked_playlist/{sync_from_id}")
 async def unlink_playlists(sync_from_id):
     try:
-       delete_count = await unlink_list(sync_from=sync_from_id)
+       delete_count = await unlink_list(sync_from=sync_from_id.strip())
     except Exception as e:
         raise HTTPException(status_code=500, detail= e)
     finally:
@@ -90,7 +92,7 @@ async def unlink_playlists(sync_from_id):
 @app.delete("/linked_playlist/{sync_to_id}")
 async def unlink_playlists(sync_to_id):
     try:
-      delete_count = await unlink_list(sync_to=sync_to_id)
+      delete_count = await unlink_list(sync_to=sync_to_id.strip())
     except Exception as e:
         raise HTTPException(status_code=500, detail= e)
     finally:

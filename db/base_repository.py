@@ -4,6 +4,7 @@ from models.models import LinkedLists, User
 from tortoise.query_utils import Q
 from tortoise.contrib.fastapi import register_tortoise
 
+
 def init(app):
     register_tortoise(
         app,
@@ -30,18 +31,22 @@ async def get_linked_lists():
     linked_list = await LinkedLists.all()
     return list(linked_list)
 
-async def set_synced_date():
-    await LinkedLists.all().update(last_synced=datetime.now())
+async def set_synced_date(sync_from):
+    await LinkedLists.filter(sync_from=sync_from).update(last_synced=datetime.now())
     
 async def set_user(client_id, client_secret):
-    user = await User.create(client_id = client_id, client_secret = client_secret)
-    return user
+    await User.create(client_id = client_id, client_secret = client_secret)
+
 
 async def set_username(client_id, username):
     await User.filter(client_id = client_id).update(client_username = username)
 
-async def get_user_credentials():
+async def get_all_users():
     await User.all()
+
+async def get_user_credentials(client_id, client_secret):    
+    return await User.filter(Q(client_id = client_id) & Q(client_secret = client_secret)).first()
+    
 
 async def reset_user():
     await User.all().delete()
