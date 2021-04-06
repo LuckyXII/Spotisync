@@ -1,7 +1,9 @@
+import threading
 from api.spoti import sync_linked_lists
 from db.base_repository import get_all_users
 from core.auth_repository import AuthRepository
 from fastapi import HTTPException
+
 
 async def authenticate(client_key):
     permission = await AuthRepository().authenticate(client_key)

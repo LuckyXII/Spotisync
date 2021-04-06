@@ -77,6 +77,7 @@ async def sync_list(permission ,from_playlist, to_playlist, last_sync):
 async def sync_linked_lists(permission):
     linked_lists = get_linked_spotipy_playlists(permission)
     for ll in linked_lists:
+        print(f'{ll.sync_from}, {ll.sync_to}, {ll.last_sync}')
         sync_list(permission, ll.sync_from, ll.sync_to, ll.last_sync)
     
     

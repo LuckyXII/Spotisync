@@ -10,10 +10,10 @@ async def client_authentication():
   #return spotipy.Spotify(auth_manager=auth_manager)
   raise NotImplementedError
 
-async def user_authentication(scope, user):
+async def user_authentication(scope, client_id, client_secret):
   return spotipy.Spotify(auth_manager=SpotifyOAuth(
-    user.client_id,
-    user.client_secret,
+    client_id,
+    client_secret,
     scope=scope,
     redirect_uri=SPOTIPY_REDIRECT_URL
   ))  
