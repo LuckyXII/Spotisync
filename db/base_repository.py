@@ -42,7 +42,8 @@ async def set_username(client_id, username):
     await User.filter(client_id = client_id).update(client_username = username)
 
 async def get_all_users():
-    await User.all()
+   users = await User.all()
+   return users
 
 async def get_user_credentials(client_id, client_secret):    
     return await User.filter(Q(client_id = client_id) & Q(client_secret = client_secret)).first()

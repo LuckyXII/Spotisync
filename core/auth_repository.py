@@ -9,7 +9,7 @@ class AuthRepository(ABC):
     async def authenticate(self, client_key_header: str):
         permission = APIPermission(client_key_header)
 
-        scope = await user_authentication('playlist-read-private', permission.CLIENT_ID, permission.CLIENT_SECRET)
+        scope = await user_authentication('playlist-modify-public', permission.CLIENT_ID, permission.CLIENT_SECRET)
         if scope == None: 
             raise SpotifyException(http_status=401, msg='Client_key does not match, check values in spotify dashboard')
 
